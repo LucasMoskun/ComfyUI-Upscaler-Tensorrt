@@ -9,11 +9,13 @@ parser = argparse.ArgumentParser(description="Export a model to TensorRT")
 parser.add_argument("--trt_path", type=str, default=None, help="Path to save the TensorRT engine")
 parser.add_argument("--onnx_path", type=str, default=None, help="Path to the ONNX model")
 args = parser.parse_args()  # Step 4: Parse the arguments
+print(f"args: {args}")
 
 def export_trt(trt_path=None, onnx_path=None, use_fp16=True):
     # Step 5: Use values from parsed arguments if None
     trt_path = trt_path or args.trt_path
     onnx_path = onnx_path or args.onnx_path
+    print(f"trt_path: {trt_path}, onnx_path: {onnx_path}")
 
     if trt_path is None:
         trt_path = input("Enter the path to save the TensorRT engine (e.g ./realesrgan.engine): ")
