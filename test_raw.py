@@ -3,7 +3,7 @@ import tensorrt as trt
 
 def build_engine(onnx_file_path, engine_file_path, input_profile):
     # Create a TensorRT logger
-    TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
+    TRT_LOGGER = trt.Logger(trt.Logger.INFO)
 
     # Create a builder
     builder = trt.Builder(TRT_LOGGER)
