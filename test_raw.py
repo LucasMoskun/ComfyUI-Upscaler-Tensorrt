@@ -1,41 +1,46 @@
 import argparse
 import tensorrt as trt
-import pycuda.driver as cuda
-import pycuda.autoinit
+import numpy as np
 
-def build_engine(onnx_file_path, engine_file_path, device_id=0):
-    # Set the GPU device context
-    cuda.Device(device_id).make_context()
-    
+def build_engine(onnx_file_path, engine_file_path):
     # Create a TensorRT logger
     TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
-    
-    # Create a builder and network
+
+    # Create a builder
     builder = trt.Builder(TRT_LOGGER)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     parser = trt.OnnxParser(network, TRT_LOGGER)
     
-    # Parse the ONNX file
+    # Parse the ONNX model
     with open(onnx_file_path, 'rb') as model:
         if not parser.parse(model.read()):
+            print('Failed to parse the ONNX file.')
             for error in range(parser.num_errors):
                 print(parser.get_error(error))
             return None
-    
-    # Build the engine
+
+    # Create the builder config
     config = builder.create_builder_config()
     config.max_workspace_size = 1 << 30  # 1GB
+
+    # Enable FP16 precision if available
+    if builder.platform_has_fast_fp16:
+        config.set_flag(trt.BuilderFlag.FP16)
+
+    # Build the engine
+    print('Building the TensorRT engine...')
     engine = builder.build_engine(network, config)
-    
-    # Save the engine to a file
+
+    if engine is None:
+        print('Failed to build the engine.')
+        return None
+
+    # Serialize the engine to a file
     with open(engine_file_path, 'wb') as f:
         f.write(engine.serialize())
     
-    # Pop the context to clean up
-    cuda.Context.pop()
-    
+    print(f'Engine successfully saved to {engine_file_path}')
     return engine
-
 def main():
     parser = argparse.ArgumentParser(description="Build a TensorRT engine from an ONNX model.")
     parser.add_argument("--onnx_path", type=str, required=True, help="Path to the ONNX model file.")
