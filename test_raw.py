@@ -1,6 +1,5 @@
 import argparse
 import tensorrt as trt
-import numpy as np
 
 def build_engine(onnx_file_path, engine_file_path):
     # Create a TensorRT logger
@@ -19,19 +18,16 @@ def build_engine(onnx_file_path, engine_file_path):
                 print(parser.get_error(error))
             return None
 
-
     config = builder.create_builder_config()
     config.set_flag(trt.BuilderFlag.FP16)  # Enable FP16 precision if available
 
     # Set the maximum workspace size
     config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 1G
 
-
     # Build the engine
-    with builder.build_engine(network, config) as engine, open(engine_file_path, 'wb') as f:
-        f.write(engine.serialize())
-        print(f'Engine successfully saved to {engine_file_path}')
-
+    print('Building the TensorRT engine...')
+    engine = builder.build_engine(network, config)
+    
     if engine is None:
         print('Failed to build the engine.')
         return None
@@ -42,6 +38,7 @@ def build_engine(onnx_file_path, engine_file_path):
     
     print(f'Engine successfully saved to {engine_file_path}')
     return engine
+
 def main():
     parser = argparse.ArgumentParser(description="Build a TensorRT engine from an ONNX model.")
     parser.add_argument("--onnx_path", type=str, required=True, help="Path to the ONNX model file.")
