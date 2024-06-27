@@ -24,13 +24,16 @@ def build_engine(onnx_file_path, engine_file_path):
     # Set the maximum workspace size
     config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 1G
 
-    # Build the engine
-    print('Building the TensorRT engine...')
-    engine = builder.build_engine(network, config)
+    # Build the serialized network
+    serialized_engine = builder.build_serialized_network(network, config)
     
-    if engine is None:
+    if serialized_engine is None:
         print('Failed to build the engine.')
         return None
+
+    # Deserialize the engine
+    runtime = trt.Runtime(TRT_LOGGER)
+    engine = runtime.deserialize_cuda_engine(serialized_engine)
 
     # Serialize the engine to a file
     with open(engine_file_path, 'wb') as f:
