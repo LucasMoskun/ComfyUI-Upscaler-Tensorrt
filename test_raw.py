@@ -20,12 +20,18 @@ def build_engine(onnx_file_path, engine_file_path):
             return None
 
     # Create the builder config
-    config = builder.create_builder_config()
-    config.max_workspace_size = 1 << 30  # 1GB
+    # config = builder.create_builder_config()
+    # config.max_workspace_size = 1 << 30  # 1GB
 
-    # Enable FP16 precision if available
-    if builder.platform_has_fast_fp16:
-        config.set_flag(trt.BuilderFlag.FP16)
+    config = builder.create_builder_config()
+    config.set_flag(trt.BuilderFlag.FP16)  # Enable FP16 precision if available
+
+    # Set the maximum workspace size
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 1G
+
+    # # Enable FP16 precision if available
+    # if builder.platform_has_fast_fp16:
+    #     config.set_flag(trt.BuilderFlag.FP16)
 
     # Build the engine
     print('Building the TensorRT engine...')
