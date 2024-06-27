@@ -45,10 +45,9 @@ def main():
     parser = argparse.ArgumentParser(description="Build a TensorRT engine from an ONNX model.")
     parser.add_argument("--onnx_path", type=str, required=True, help="Path to the ONNX model file.")
     parser.add_argument("--trt_path", type=str, required=True, help="Path to save the TensorRT engine.")
-    parser.add_argument("--device_id", type=int, default=0, help="GPU device ID to use for engine building.")
     args = parser.parse_args()
 
-    build_engine(args.onnx_path, args.trt_path, args.device_id)
+    build_engine(args.onnx_path, args.trt_path)
 
 if __name__ == "__main__":
     main()
