@@ -206,7 +206,7 @@ class Engine:
                 builder, network[1]
             )
             config.add_optimization_profile(calib_profile)
-            config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 21474836480)
+            config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 80530636800 )
 
         try:
             engine = engine_from_network(

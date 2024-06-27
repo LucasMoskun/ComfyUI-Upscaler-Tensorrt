@@ -23,7 +23,7 @@ def build_engine(onnx_file_path, engine_file_path, input_profile):
 
     # Set the maximum workspace size
     #config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 1G
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 21474836480)  # 1G
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 80530636800 )  # 1G
 
     # Create optimization profile for dynamic shapes
     profile = builder.create_optimization_profile()
