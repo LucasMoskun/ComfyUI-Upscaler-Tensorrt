@@ -22,7 +22,8 @@ def build_engine(onnx_file_path, engine_file_path, input_profile):
     config.set_flag(trt.BuilderFlag.FP16)  # Enable FP16 precision if available
 
     # Set the maximum workspace size
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 1G
+    #config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 1G
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 21474836480)  # 1G
 
     # Create optimization profile for dynamic shapes
     profile = builder.create_optimization_profile()
